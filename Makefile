@@ -1,4 +1,5 @@
 .PHONY: \
+	cert \
 	format \
 	host
 	run \
@@ -19,6 +20,10 @@ test: host $(TESTS) $(SRCS)
 
 format: $(SRCS) $(TESTS)
 	go fmt ./...
+
+cert:
+	openssl req -newkey rsa:2048 -nodes -keyout server.key -x509 -days 365 -out server.crt
+	chmod 400 server.key server.crt
 
 host:
 	go get -t ./...
