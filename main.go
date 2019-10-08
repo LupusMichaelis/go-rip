@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/ant0ine/go-json-rest/rest"
 	"log"
 	"net/http"
 )
@@ -14,7 +15,7 @@ type Configuration struct {
 	Key         string
 }
 
-type httpHandler func(http.ResponseWriter, *http.Request)
+type httpHandler func(rest.ResponseWriter, *rest.Request)
 
 var getConfiguration = (func() func() Configuration {
 	configuration := Configuration{
@@ -29,29 +30,33 @@ var getConfiguration = (func() func() Configuration {
 
 func main() {
 
-	addr := fmt.Sprintf("[%s]:%d", getConfiguration().Ip, getConfiguration().Port)
+	api := rest.NewApi()
+	api.Use(rest.DefaultDevStack...)
+	api.SetApp(rest.AppSimple(compose([]httpHandler{logger, kevin})))
+	apiHandler := api.MakeHandler()
 
+	addr := fmt.Sprintf("[%s]:%d", getConfiguration().Ip, getConfiguration().Port)
 	srv := &http.Server{
 		Addr:    addr,
-		Handler: http.HandlerFunc(compose([]httpHandler{logger, kevin})),
+		Handler: apiHandler,
 	}
 	log.Printf("Serving on '%s'", addr)
 	log.Fatal(srv.ListenAndServeTLS(getConfiguration().Certificate, getConfiguration().Key))
 }
 
-func logger(w http.ResponseWriter, r *http.Request) {
+func logger(w rest.ResponseWriter, r *rest.Request) {
 
 	log.Printf("Got connection: '%s'", r.Proto)
 }
 
-func kevin(w http.ResponseWriter, r *http.Request) {
+func kevin(w rest.ResponseWriter, r *rest.Request) {
 
-	w.Write([]byte("YOLO!!!!!!!"))
+	w.WriteJson(map[string]string{"Booty": "Where is it?!!"})
 }
 
 func compose(handlerList []httpHandler) httpHandler {
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return func(w rest.ResponseWriter, r *rest.Request) {
 
 		for _, handler := range handlerList {
 
