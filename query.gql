@@ -1,0 +1,5 @@
+query
+{
+    first: country(code: "fr") {code}
+    second: country(code: "en") {code}
+}

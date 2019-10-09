@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"./config"
+	"./graphql"
 	"./rest"
 )
 
@@ -20,6 +21,14 @@ func main() {
 
 	apiHandler := restApi.MakeHandler()
 	http.Handle("/rest", apiHandler)
+
+	graphqlHandler, err := graphql.MakeEndpoint()
+	if nil != err {
+
+		log.Fatal(err)
+	}
+
+	http.Handle("/graph", graphqlHandler) // XXX
 
 	addr := fmt.Sprintf("[%s]:%d", config.GetConfiguration().Ip, config.GetConfiguration().Port)
 	srv := &http.Server{
