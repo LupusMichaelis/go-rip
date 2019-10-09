@@ -12,18 +12,18 @@ import (
 
 func main() {
 
-	restApi, err := rest.MakeRouter()
+	restApi, err := rest.MakeApi()
 	if nil != err {
 
 		log.Fatal(err)
 	}
 
 	apiHandler := restApi.MakeHandler()
+	http.Handle("/rest", apiHandler)
 
 	addr := fmt.Sprintf("[%s]:%d", config.GetConfiguration().Ip, config.GetConfiguration().Port)
 	srv := &http.Server{
-		Addr:    addr,
-		Handler: apiHandler,
+		Addr: addr,
 	}
 
 	log.Printf("Serving on '%s'", addr)

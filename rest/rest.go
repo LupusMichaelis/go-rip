@@ -28,7 +28,7 @@ func compose(handlerList []HttpHandler) HttpHandler {
 	}
 }
 
-func MakeRouter() (api *rest.Api, err error) {
+func MakeApi() (api *rest.Api, err error) {
 
 	api = rest.NewApi()
 	api.Use(rest.DefaultDevStack...)
