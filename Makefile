@@ -12,7 +12,10 @@ SRCS=\
 
 TESTS=\
 
-run: host $(SRCS)
+build: host $(SRCS)
+	go $@ .
+
+run: build
 	go $@ .
 
 cert:
