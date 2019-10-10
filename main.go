@@ -20,7 +20,7 @@ func main() {
 	}
 
 	apiHandler := restApi.MakeHandler()
-	http.Handle("/rest", apiHandler)
+	http.Handle("/rest/", http.StripPrefix("/rest", apiHandler))
 
 	graphqlHandler, err := graphql.MakeEndpoint()
 	if nil != err {

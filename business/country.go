@@ -33,3 +33,8 @@ func (b *Business) GetCountryByCode(code string) *Country {
 
 	return nil
 }
+
+func (b *Business) GetAllCountries() []Country {
+
+	return countryList
+}
