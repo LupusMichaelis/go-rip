@@ -23,10 +23,10 @@ const schema = `
 `
 
 type Country struct {
-    Fields struct {
-        Id   *graphql.ID
-        Code string
-    }
+	Fields struct {
+		Id *graphql.ID
+		business.Country
+	}
 }
 
 func (c Country) ID() *graphql.ID {
@@ -51,7 +51,13 @@ func (r *query) Country(args struct{ Code string }) (c *Country, err error) {
 		return
 	}
 
-	c = &Country{Fields: struct{Id *graphql.ID; Code string}{Code: found.Code}}
+	c = &Country{Fields: struct {
+		Id *graphql.ID
+		business.Country
+	}{
+		Id:      nil,
+		Country: business.Country{Code: found.Code},
+	}}
 
 	return
 }
