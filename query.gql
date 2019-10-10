@@ -1,5 +1,7 @@
 query
 {
     first: country(code: "fr") {code}
-    second: country(code: "en") {code}
+    second: country(code: "jp") {code}
+    third: country(code: "up") {code}
+    fourth: country(code: "en") {code}
 }
