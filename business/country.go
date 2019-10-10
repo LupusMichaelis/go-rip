@@ -1,6 +1,8 @@
 package business
 
-import ()
+import (
+	"fmt"
+)
 
 type Business struct{}
 
@@ -21,17 +23,20 @@ func init() {
 	)
 }
 
-func (b *Business) GetCountryByCode(code string) *Country {
+func (b *Business) GetCountryByCode(code string) (country *Country, err error) {
 
-	for _, country := range countryList {
+	for _, c := range countryList {
 
-		if code == country.Code {
+		if code == c.Code {
 
-			return &country
+			country = &c
+			return
 		}
 	}
 
-	return nil
+	err = fmt.Errorf("unknown country code '%s'", code)
+
+	return
 }
 
 func (b *Business) GetAllCountries() []Country {

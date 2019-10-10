@@ -1,7 +1,6 @@
 package graphql
 
 import (
-	"fmt"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
 	"lupusmic.org/rip/business"
@@ -44,10 +43,9 @@ type query struct{}
 func (r *query) Country(args struct{ Code string }) (c *Country, err error) {
 
 	b := business.Business{}
-	found := b.GetCountryByCode(args.Code)
+	found, err := b.GetCountryByCode(args.Code)
 	if nil == found {
 
-		err = fmt.Errorf("unknown country code '%s'", args.Code)
 		return
 	}
 

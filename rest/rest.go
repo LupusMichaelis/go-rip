@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"fmt"
 	"github.com/ant0ine/go-json-rest/rest"
 	"log"
 	"lupusmic.org/rip/business"
@@ -36,15 +35,16 @@ func GetAllCountries(w rest.ResponseWriter, req *rest.Request) {
 
 func GetOneCountry(w rest.ResponseWriter, req *rest.Request) {
 
-	b := business.Business{}
 	code := req.PathParam("code")
-	one := b.GetCountryByCode(code)
 
-	if nil != one {
+	b := business.Business{}
+	one, err := b.GetCountryByCode(code)
 
-		w.WriteJson(&one)
-	} else {
+	if nil == one {
 
-		rest.Error(w, fmt.Sprintf("unknown country code '%s'", code), 404)
+		rest.Error(w, err.Error(), 404)
+		return
 	}
+
+	w.WriteJson(&one)
 }
