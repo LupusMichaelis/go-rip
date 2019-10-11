@@ -28,7 +28,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.Handle("/graph", graphqlHandler) // XXX
+	http.Handle("/graph", graphqlHandler)
 
 	addr := fmt.Sprintf("[%s]:%d", config.GetConfiguration().Ip, config.GetConfiguration().Port)
 	srv := &http.Server{
