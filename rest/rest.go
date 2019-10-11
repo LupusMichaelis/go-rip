@@ -17,6 +17,7 @@ func MakeApi() (api *rest.Api, err error) {
 		rest.Get("/country", GetAllCountries),
 		rest.Post("/country", PostOneCountry),
 		rest.Get("/country/:code", GetOneCountry),
+		rest.Put("/country/:code", PutOneCountry),
 	)
 
 	if err != nil {
@@ -60,7 +61,7 @@ func GetOneCountry(out rest.ResponseWriter, in *rest.Request) {
 
 	if nil == one {
 
-		rest.Error(out, err.Error(), 404)
+		rest.Error(out, err.Error(), http.StatusNotFound)
 		return
 	}
 
@@ -116,6 +117,43 @@ func PostOneCountry(out rest.ResponseWriter, in *rest.Request) {
 
 	out.Header().Set("Location", fmt.Sprintf("/country/%s", payload.Code))
 	out.WriteHeader(http.StatusCreated)
+
+	return
+}
+
+func PutOneCountry(out rest.ResponseWriter, in *rest.Request) {
+
+	payload := Country{}
+	err := in.DecodeJsonPayload(&payload)
+
+	if nil != err {
+
+		rest.Error(out, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	b := business.Business{}
+	one, err := b.GetCountryByCode(payload.Code)
+	if nil != err {
+
+		rest.Error(out, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	if one.Code != payload.Code && one.Name != payload.Name {
+
+		one.Name = payload.Name
+		err = b.UpdateCountry(*one)
+	}
+
+	if nil != err {
+
+		rest.Error(out, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	out.Header().Set("Location", fmt.Sprintf("/country/%s", payload.Code))
+	out.WriteHeader(http.StatusNoContent)
 
 	return
 }

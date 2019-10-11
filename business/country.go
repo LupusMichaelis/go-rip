@@ -83,3 +83,16 @@ func (b *Business) AddCountry(country Country) (err error) {
 
 	return
 }
+
+func (b *Business) UpdateCountry(newValue Country) (err error) {
+
+	currentValue, err := b.GetCountryByCode(newValue.Code)
+
+	if nil != err {
+
+		return
+	}
+
+	currentValue.Name = newValue.Name
+	return
+}
