@@ -18,6 +18,7 @@ func MakeApi() (api *rest.Api, err error) {
 		rest.Post("/country", PostOneCountry),
 		rest.Get("/country/:code", GetOneCountry),
 		rest.Put("/country/:code", PutOneCountry),
+		rest.Delete("/country/:code", deleteOneCountry),
 	)
 
 	if err != nil {
@@ -156,4 +157,27 @@ func PutOneCountry(out rest.ResponseWriter, in *rest.Request) {
 	out.WriteHeader(http.StatusNoContent)
 
 	return
+}
+
+func deleteOneCountry(out rest.ResponseWriter, in *rest.Request) {
+
+	code := in.PathParam("code")
+
+	b := business.Business{}
+	one, err := b.GetCountryByCode(code)
+
+	if nil == one {
+
+		rest.Error(out, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	err = b.DeleteCountry(*one)
+	if nil != err {
+
+		rest.Error(out, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	out.WriteHeader(http.StatusNoContent)
 }
