@@ -2,6 +2,7 @@ package business
 
 import (
 	"fmt"
+	"sync"
 )
 
 type Business struct{}
@@ -13,9 +14,13 @@ type Country struct {
 
 type CountryList []Country
 
+var lock = sync.RWMutex{}
 var countryList CountryList
 
 func init() {
+	lock.Lock()
+	defer lock.Unlock()
+
 	countryList = append(countryList,
 		Country{Code: "fr", Name: "France"},
 		Country{Code: "de", Name: "Germany"},
@@ -24,6 +29,9 @@ func init() {
 }
 
 func (b *Business) GetCountryByCode(code string) (country *Country, err error) {
+
+	lock.RLock()
+	defer lock.RUnlock()
 
 	for _, c := range countryList {
 
