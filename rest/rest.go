@@ -14,11 +14,12 @@ func MakeApi() (api *rest.Api, err error) {
 	api.Use(rest.DefaultDevStack...)
 
 	router, err := rest.MakeRouter(
-		rest.Get("/country", GetAllCountries),
-		rest.Post("/country", PostOneCountry),
-		rest.Get("/country/:code", GetOneCountry),
-		rest.Put("/country/:code", PutOneCountry),
+		rest.Get("/country", getAllCountries),
+
 		rest.Delete("/country/:code", deleteOneCountry),
+		rest.Get("/country/:code", getOneCountry),
+		rest.Post("/country", postOneCountry),
+		rest.Put("/country/:code", putOneCountry),
 	)
 
 	if err != nil {
@@ -36,24 +37,14 @@ type Country struct {
 	Name string `json:string`
 }
 
-/*
-func (c * Country) hydrate(from business.Country) {
-
-    c.Code = from.Code
-    c.Name = from.Name
-}
-
-type CountryList []Country
-
-*/
-func GetAllCountries(out rest.ResponseWriter, in *rest.Request) {
+func getAllCountries(out rest.ResponseWriter, in *rest.Request) {
 
 	b := business.Business{}
 	all := b.GetAllCountries()
 	out.WriteJson(&all)
 }
 
-func GetOneCountry(out rest.ResponseWriter, in *rest.Request) {
+func getOneCountry(out rest.ResponseWriter, in *rest.Request) {
 
 	code := in.PathParam("code")
 
@@ -69,18 +60,7 @@ func GetOneCountry(out rest.ResponseWriter, in *rest.Request) {
 	out.WriteJson(&one)
 }
 
-/*
-	var payload []Country = make([]Country, len(all))
-    for index, from := range all {
-
-        payload[index].hydrate(from)
-    }
-
-    out.WriteJson(&payload)
-}
-*/
-
-func PostOneCountry(out rest.ResponseWriter, in *rest.Request) {
+func postOneCountry(out rest.ResponseWriter, in *rest.Request) {
 
 	payload := Country{}
 	err := in.DecodeJsonPayload(&payload)
@@ -122,7 +102,7 @@ func PostOneCountry(out rest.ResponseWriter, in *rest.Request) {
 	return
 }
 
-func PutOneCountry(out rest.ResponseWriter, in *rest.Request) {
+func putOneCountry(out rest.ResponseWriter, in *rest.Request) {
 
 	payload := Country{}
 	err := in.DecodeJsonPayload(&payload)
