@@ -3,24 +3,10 @@ package graphql
 import (
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
+	"io/ioutil"
+	"log"
 	"lupusmic.org/rip/business"
 )
-
-const schema = `
-    schema {
-        query: Query
-    }
-
-    type Query {
-        country(code: String!): Country
-    }
-
-    type Country {
-        id: ID
-        code: String!
-        name: String
-    }
-`
 
 type Country struct {
 	Fields struct {
@@ -72,7 +58,14 @@ func (r *query) Country(args struct{ Code string }) (c *Country, err error) {
 
 func MakeEndpoint() (endpoint *relay.Handler, err error) {
 
-	parsedSchema := graphql.MustParseSchema(schema, &query{})
+	schema, err := ioutil.ReadFile("graphql/schema.sdl")
+
+	if err != nil {
+
+		log.Fatal(err)
+	}
+
+	parsedSchema := graphql.MustParseSchema(string(schema), &query{})
 	endpoint = &relay.Handler{Schema: parsedSchema}
 
 	return
