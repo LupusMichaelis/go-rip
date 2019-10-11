@@ -1,9 +1,11 @@
 package rest
 
 import (
+	"fmt"
 	"github.com/ant0ine/go-json-rest/rest"
 	"log"
 	"lupusmic.org/rip/business"
+	"net/http"
 )
 
 func MakeApi() (api *rest.Api, err error) {
@@ -13,6 +15,7 @@ func MakeApi() (api *rest.Api, err error) {
 
 	router, err := rest.MakeRouter(
 		rest.Get("/country", GetAllCountries),
+		rest.Post("/country", PostOneCountry),
 		rest.Get("/country/:code", GetOneCountry),
 	)
 
@@ -24,6 +27,11 @@ func MakeApi() (api *rest.Api, err error) {
 	api.SetApp(router)
 
 	return
+}
+
+type Country struct {
+	Code string `json:string`
+	Name string `json:string`
 }
 
 func GetAllCountries(w rest.ResponseWriter, req *rest.Request) {
@@ -47,4 +55,46 @@ func GetOneCountry(w rest.ResponseWriter, req *rest.Request) {
 	}
 
 	w.WriteJson(&one)
+}
+
+func PostOneCountry(w rest.ResponseWriter, req *rest.Request) {
+
+	payload := Country{}
+	err := req.DecodeJsonPayload(&payload)
+
+	if nil != err {
+
+		rest.Error(w, err.Error(), 400)
+		return
+	}
+
+	b := business.Business{}
+	validationErrorList := b.ValidateCountry(business.Country{
+		Code: payload.Code,
+		Name: payload.Name,
+	})
+
+	if 0 < len(validationErrorList) {
+
+		w.WriteHeader(http.StatusBadRequest)
+		w.WriteJson(validationErrorList)
+		return
+	}
+
+	err = b.AddCountry(business.Country{
+		Code: payload.Code,
+		Name: payload.Name,
+	})
+
+	if nil != err {
+
+		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteJson(map[string]string{"error": "Couldn't add the country"})
+		return
+	}
+
+	w.Header().Set("Location", fmt.Sprintf("/country/%s", payload.Code))
+	w.WriteHeader(http.StatusCreated)
+
+	return
 }
