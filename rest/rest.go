@@ -34,37 +34,58 @@ type Country struct {
 	Name string `json:string`
 }
 
-func GetAllCountries(w rest.ResponseWriter, req *rest.Request) {
+/*
+func (c * Country) hydrate(from business.Country) {
+
+    c.Code = from.Code
+    c.Name = from.Name
+}
+
+type CountryList []Country
+
+*/
+func GetAllCountries(out rest.ResponseWriter, in *rest.Request) {
 
 	b := business.Business{}
 	all := b.GetAllCountries()
-	w.WriteJson(&all)
+	out.WriteJson(&all)
 }
 
-func GetOneCountry(w rest.ResponseWriter, req *rest.Request) {
+func GetOneCountry(out rest.ResponseWriter, in *rest.Request) {
 
-	code := req.PathParam("code")
+	code := in.PathParam("code")
 
 	b := business.Business{}
 	one, err := b.GetCountryByCode(code)
 
 	if nil == one {
 
-		rest.Error(w, err.Error(), 404)
+		rest.Error(out, err.Error(), 404)
 		return
 	}
 
-	w.WriteJson(&one)
+	out.WriteJson(&one)
 }
 
-func PostOneCountry(w rest.ResponseWriter, req *rest.Request) {
+/*
+	var payload []Country = make([]Country, len(all))
+    for index, from := range all {
+
+        payload[index].hydrate(from)
+    }
+
+    out.WriteJson(&payload)
+}
+*/
+
+func PostOneCountry(out rest.ResponseWriter, in *rest.Request) {
 
 	payload := Country{}
-	err := req.DecodeJsonPayload(&payload)
+	err := in.DecodeJsonPayload(&payload)
 
 	if nil != err {
 
-		rest.Error(w, err.Error(), 400)
+		rest.Error(out, err.Error(), 400)
 		return
 	}
 
@@ -76,8 +97,8 @@ func PostOneCountry(w rest.ResponseWriter, req *rest.Request) {
 
 	if 0 < len(validationErrorList) {
 
-		w.WriteHeader(http.StatusBadRequest)
-		w.WriteJson(validationErrorList)
+		out.WriteHeader(http.StatusBadRequest)
+		out.WriteJson(validationErrorList)
 		return
 	}
 
@@ -88,13 +109,13 @@ func PostOneCountry(w rest.ResponseWriter, req *rest.Request) {
 
 	if nil != err {
 
-		w.WriteHeader(http.StatusInternalServerError)
-		w.WriteJson(map[string]string{"error": "Couldn't add the country"})
+		out.WriteHeader(http.StatusInternalServerError)
+		out.WriteJson(map[string]string{"error": "Couldn't add the country"})
 		return
 	}
 
-	w.Header().Set("Location", fmt.Sprintf("/country/%s", payload.Code))
-	w.WriteHeader(http.StatusCreated)
+	out.Header().Set("Location", fmt.Sprintf("/country/%s", payload.Code))
+	out.WriteHeader(http.StatusCreated)
 
 	return
 }
