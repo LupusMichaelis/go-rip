@@ -18,6 +18,7 @@ const schema = `
     type Country {
         id: ID
         code: String!
+        name: String
     }
 `
 
@@ -38,6 +39,12 @@ func (c Country) Code() string {
 	return c.Fields.Code
 }
 
+func (c Country) Name() *string {
+
+	name := c.Fields.Name
+	return &name
+}
+
 type query struct{}
 
 func (r *query) Country(args struct{ Code string }) (c *Country, err error) {
@@ -53,8 +60,11 @@ func (r *query) Country(args struct{ Code string }) (c *Country, err error) {
 		Id *graphql.ID
 		business.Country
 	}{
-		Id:      nil,
-		Country: business.Country{Code: found.Code},
+		Id: nil,
+		Country: business.Country{
+			Code: found.Code,
+			Name: found.Name,
+		},
 	}}
 
 	return
