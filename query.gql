@@ -6,7 +6,4 @@ query
     fourth: country(code: "en") {code}
     fifth: country(code: "to") {name}
     sixth: country(code: "pl") {name}
-
-    missing: add(code: "pl", name: "Poland") {code, name}
-    bad: add(code: "aa", name: "") {code, name}
 }
