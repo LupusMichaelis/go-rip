@@ -58,7 +58,7 @@ func (r *query) Country(args struct{ Code string }) (c *Country, err error) {
 
 func MakeEndpoint() (endpoint *relay.Handler, err error) {
 
-	schema, err := ioutil.ReadFile("graphql/schema.sdl")
+	schema, err := ioutil.ReadFile("graphql/schema.graphql")
 
 	if err != nil {
 
