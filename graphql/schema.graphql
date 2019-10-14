@@ -4,6 +4,7 @@ schema {
 
 type Query {
     country(code: String!): Country
+    add(code: String!, name: String!): Country
 }
 
 type Country {
