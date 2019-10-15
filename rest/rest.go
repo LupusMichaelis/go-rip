@@ -80,7 +80,7 @@ func postOneCountry(out rest.ResponseWriter, in *rest.Request) {
 	if nil != validation {
 
 		out.WriteHeader(http.StatusBadRequest)
-		out.WriteJson(err)
+		out.WriteJson(validation.Messages)
 		return
 	}
 

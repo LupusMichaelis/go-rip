@@ -9,12 +9,12 @@ import (
 func New() (err *Errors) {
 
 	err = &Errors{}
-	err.Messages = make(map[string][]error, 0)
+	err.Messages = make(map[string][]string, 0)
 	return
 }
 
 type Errors struct {
-	Messages map[string][]error
+	Messages map[string][]string
 }
 
 func (e *Errors) Error() (out string) {
