@@ -39,5 +39,9 @@ func main() {
 	}
 
 	log.Printf("Serving on '%s'", addr)
-	log.Fatal(srv.ListenAndServeTLS(config.GetConfiguration().Certificate, config.GetConfiguration().Key))
+	err = srv.ListenAndServeTLS(
+		config.GetConfiguration().Certificate,
+		config.GetConfiguration().Key,
+	)
+	log.Fatal(err)
 }
