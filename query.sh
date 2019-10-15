@@ -17,7 +17,7 @@ gql-query()
         '{ "query": $query_gql }' \
     )
 
-    curl -k -XPOST -d "$query" https://[::1]:4343/graph | jq .
+    curl -k -XPOST -d "$query" https://[::1]:4343/g | jq .
 }
 
 gql-query-from-file query.gql

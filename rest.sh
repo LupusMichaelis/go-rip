@@ -1,13 +1,13 @@
 #!/bin/bash
 
-curl -X GET -i -k https://[::1]:4343/rest/country/en
+curl -X GET -i -k https://[::1]:4343/r/country/en
 
 curl \
     -ik \
     -X POST \
     -H 'Content-Type: application/json; charset=UTF-8' \
     -d '{"code": "to", "Name": "Toto"}' \
-    https://[::1]:4343/rest/country
+    https://[::1]:4343/r/country
 
 
 curl \
@@ -15,4 +15,4 @@ curl \
     -X PUT \
     -H 'Content-Type: application/json; charset=UTF-8' \
     -d '{"code": "to", "Name": "Togo"}' \
-    https://[::1]:4343/rest/country/to
+    https://[::1]:4343/r/country/to

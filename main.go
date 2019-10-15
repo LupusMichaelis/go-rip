@@ -6,10 +6,10 @@ import (
 	"log"
 	"net/http"
 
-	"./config"
-	"./graphql"
-	"./rest"
 	"lupusmic.org/rip/business"
+	"lupusmic.org/rip/config"
+	"lupusmic.org/rip/graphql"
+	"lupusmic.org/rip/rest"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 	}
 
 	apiHandler := restApi.MakeHandler()
-	http.Handle("/rest/", http.StripPrefix("/rest", apiHandler))
+	http.Handle("/r/", http.StripPrefix("/r", apiHandler))
 
 	graphqlHandler, err := graphql.MakeEndpoint(b)
 	if nil != err {
@@ -31,7 +31,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	http.Handle("/graph", graphqlHandler)
+	http.Handle("/g", graphqlHandler)
 
 	addr := fmt.Sprintf("[%s]:%d", config.GetConfiguration().Ip, config.GetConfiguration().Port)
 	srv := &http.Server{
