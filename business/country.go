@@ -62,6 +62,11 @@ func (b *Business) ValidateCountry(country Country) (err *validation.Errors) {
 		err.Messages.Add("code", fmt.Sprintf("Country code '%s' must be a 2 character string", country.Code))
 	}
 
+	if c, _ := b.GetCountryByCode(country.Code); nil != c {
+
+		err.Messages.Add("code", fmt.Sprintf("Country code '%s' must be unique", country.Code))
+	}
+
 	if 0 == len(country.Name) {
 
 		err.Messages.Add("name", "Country name must not be empty")
