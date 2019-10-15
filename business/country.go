@@ -3,10 +3,7 @@ package business
 import (
 	"fmt"
 	"lupusmic.org/rip/validation"
-	"sync"
 )
-
-type Business struct{}
 
 type Country struct {
 	Code string
@@ -15,26 +12,9 @@ type Country struct {
 
 type CountryList []Country
 
-var lock = sync.RWMutex{}
-var countryList CountryList
-
-func init() {
-	lock.Lock()
-	defer lock.Unlock()
-
-	countryList = append(countryList,
-		Country{Code: "fr", Name: "France"},
-		Country{Code: "de", Name: "Germany"},
-		Country{Code: "en", Name: "England"},
-	)
-}
-
 func (b *Business) GetCountryByCode(code string) (country *Country, err error) {
 
-	lock.RLock()
-	defer lock.RUnlock()
-
-	for _, c := range countryList {
+	for _, c := range b.countryList {
 
 		if code == c.Code {
 
@@ -50,7 +30,7 @@ func (b *Business) GetCountryByCode(code string) (country *Country, err error) {
 
 func (b *Business) GetAllCountries() []Country {
 
-	return countryList
+	return b.countryList
 }
 
 func (b *Business) ValidateCountry(country Country) (err *validation.Errors) {
@@ -82,9 +62,6 @@ func (b *Business) ValidateCountry(country Country) (err *validation.Errors) {
 
 func (b *Business) AddCountry(country Country) (err *validation.Errors) {
 
-	lock.Lock()
-	defer lock.Unlock()
-
 	err = b.ValidateCountry(Country{
 		Code: country.Code,
 		Name: country.Name,
@@ -95,7 +72,7 @@ func (b *Business) AddCountry(country Country) (err *validation.Errors) {
 		return
 	}
 
-	countryList = append(countryList, country)
+	b.countryList = append(b.countryList, country)
 
 	return
 }
@@ -115,15 +92,12 @@ func (b *Business) UpdateCountry(newValue Country) (err error) {
 
 func (b *Business) DeleteCountry(deleteMe Country) (err error) {
 
-	lock.Lock()
-	defer lock.Unlock()
-
 	var (
 		position int
 		current  Country
 	)
 
-	for position, current = range countryList {
+	for position, current = range b.countryList {
 
 		if current.Code == deleteMe.Code {
 
@@ -131,12 +105,12 @@ func (b *Business) DeleteCountry(deleteMe Country) (err error) {
 		}
 	}
 
-	if len(countryList) == position {
+	if len(b.countryList) == position {
 
 		return fmt.Errorf("Not found")
 	}
 
-	countryList = append(countryList[:position], countryList[position+1:]...)
+	b.countryList = append(b.countryList[:position], b.countryList[position+1:]...)
 
 	return
 }

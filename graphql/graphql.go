@@ -25,12 +25,13 @@ func (c Country) Name() *string {
 	return &name
 }
 
-type query struct{}
+type query struct {
+	b *business.Business
+}
 
-func (r *query) Country(args struct{ Code string }) (c *Country, err error) {
+func (q *query) Country(args struct{ Code string }) (c *Country, err error) {
 
-	b := business.Business{}
-	found, err := b.GetCountryByCode(args.Code)
+	found, err := q.b.GetCountryByCode(args.Code)
 	if nil == found {
 
 		return
@@ -48,7 +49,7 @@ func (r *query) Country(args struct{ Code string }) (c *Country, err error) {
 	return
 }
 
-func MakeEndpoint() (endpoint *relay.Handler, err error) {
+func MakeEndpoint(b *business.Business) (endpoint *relay.Handler, err error) {
 
 	schema, err := ioutil.ReadFile("graphql/schema.graphql")
 
@@ -57,7 +58,7 @@ func MakeEndpoint() (endpoint *relay.Handler, err error) {
 		log.Fatal(err)
 	}
 
-	parsedSchema := graphql.MustParseSchema(string(schema), &query{})
+	parsedSchema := graphql.MustParseSchema(string(schema), &query{b})
 	endpoint = &relay.Handler{Schema: parsedSchema}
 
 	return
@@ -68,8 +69,7 @@ func (q *query) Add(args struct {
 	Name string
 }) (c *Country, err error) {
 
-	b := business.Business{}
-	validation := b.AddCountry(business.Country{
+	validation := q.b.AddCountry(business.Country{
 		Code: args.Code,
 		Name: args.Name,
 	})

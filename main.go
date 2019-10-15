@@ -9,11 +9,14 @@ import (
 	"./config"
 	"./graphql"
 	"./rest"
+	"lupusmic.org/rip/business"
 )
 
 func main() {
 
-	restApi, err := rest.MakeApi()
+	var b *business.Business = business.New()
+
+	restApi, err := rest.MakeApi(b)
 	if nil != err {
 
 		log.Fatal(err)
@@ -22,7 +25,7 @@ func main() {
 	apiHandler := restApi.MakeHandler()
 	http.Handle("/rest/", http.StripPrefix("/rest", apiHandler))
 
-	graphqlHandler, err := graphql.MakeEndpoint()
+	graphqlHandler, err := graphql.MakeEndpoint(b)
 	if nil != err {
 
 		log.Fatal(err)
