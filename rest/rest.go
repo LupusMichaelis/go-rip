@@ -67,27 +67,22 @@ func postOneCountry(out rest.ResponseWriter, in *rest.Request) {
 
 	if nil != err {
 
-		rest.Error(out, err.Error(), 400)
+		rest.Error(out, err.Error(), http.StatusNotFound)
 		return
 	}
 
 	b := business.Business{}
-	validationErrorList := b.ValidateCountry(business.Country{
+	validation := b.AddCountry(business.Country{
 		Code: payload.Code,
 		Name: payload.Name,
 	})
 
-	if 0 < len(validationErrorList) {
+	if nil != validation {
 
 		out.WriteHeader(http.StatusBadRequest)
-		out.WriteJson(validationErrorList)
+		out.WriteJson(err)
 		return
 	}
-
-	err = b.AddCountry(business.Country{
-		Code: payload.Code,
-		Name: payload.Name,
-	})
 
 	if nil != err {
 

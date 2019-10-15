@@ -1,7 +1,9 @@
 package business
 
 import (
+	"errors"
 	"fmt"
+	"lupusmic.org/rip/validation"
 	"sync"
 )
 
@@ -52,21 +54,21 @@ func (b *Business) GetAllCountries() []Country {
 	return countryList
 }
 
-func (b *Business) ValidateCountry(country Country) (err map[string]string) {
+func (b *Business) ValidateCountry(country Country) (err *validation.Errors) {
 
-	err = make(map[string]string, 0)
+	err = validation.New()
 
 	if 2 != len(country.Code) {
 
-		err["code"] = fmt.Sprintf("Country code '%s' must be a 2 character string", country.Code)
+		err.Messages["code"] = []error{fmt.Errorf("Country code '%s' must be a 2 character string", country.Code)}
 	}
 
 	if 0 == len(country.Name) {
 
-		err["name"] = "Country name must not be empty"
+		err.Messages["name"] = []error{errors.New("Country name must not be empty")}
 	}
 
-	if 0 == len(err) {
+	if 0 == len(err.Messages) {
 
 		err = nil
 	}
@@ -74,10 +76,20 @@ func (b *Business) ValidateCountry(country Country) (err map[string]string) {
 	return
 }
 
-func (b *Business) AddCountry(country Country) (err error) {
+func (b *Business) AddCountry(country Country) (err *validation.Errors) {
 
 	lock.Lock()
 	defer lock.Unlock()
+
+	err = b.ValidateCountry(Country{
+		Code: country.Code,
+		Name: country.Name,
+	})
+
+	if nil != err {
+
+		return
+	}
 
 	countryList = append(countryList, country)
 
