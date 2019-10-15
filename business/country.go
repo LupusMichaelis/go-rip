@@ -59,22 +59,12 @@ func (b *Business) ValidateCountry(country Country) (err *validation.Errors) {
 
 	if 2 != len(country.Code) {
 
-		if 0 < len(err.Messages["code"]) {
-
-			err.Messages["code"] = make([]string, 1)
-		}
-
-		err.Messages["code"] = append(err.Messages["code"], fmt.Sprintf("Country code '%s' must be a 2 character string", country.Code))
+		err.Messages.Add("code", fmt.Sprintf("Country code '%s' must be a 2 character string", country.Code))
 	}
 
 	if 0 == len(country.Name) {
 
-		if 0 < len(err.Messages["name"]) {
-
-			err.Messages["name"] = make([]string, 1)
-		}
-
-		err.Messages["name"] = append(err.Messages["name"], "Country name must not be empty")
+		err.Messages.Add("name", "Country name must not be empty")
 	}
 
 	if 0 == len(err.Messages) {

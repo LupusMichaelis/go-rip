@@ -2,6 +2,7 @@ package validation
 
 import (
 	"fmt"
+	"lupusmic.org/rip/util"
 )
 
 // Inspired by https://evilmartians.com/chronicles/errors-in-go-from-denial-to-acceptance
@@ -9,12 +10,12 @@ import (
 func New() (err *Errors) {
 
 	err = &Errors{}
-	err.Messages = make(map[string][]string, 0)
+	err.Messages = util.MakeRegistry()
 	return
 }
 
 type Errors struct {
-	Messages map[string][]string
+	Messages util.Registry
 }
 
 func (e *Errors) Error() (out string) {
