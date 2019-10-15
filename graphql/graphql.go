@@ -10,14 +10,8 @@ import (
 
 type Country struct {
 	Fields struct {
-		Id *graphql.ID
 		business.Country
 	}
-}
-
-func (c Country) ID() *graphql.ID {
-
-	return c.Fields.Id
 }
 
 func (c Country) Code() string {
@@ -43,10 +37,8 @@ func (r *query) Country(args struct{ Code string }) (c *Country, err error) {
 	}
 
 	c = &Country{Fields: struct {
-		Id *graphql.ID
 		business.Country
 	}{
-		Id: nil,
 		Country: business.Country{
 			Code: found.Code,
 			Name: found.Name,
