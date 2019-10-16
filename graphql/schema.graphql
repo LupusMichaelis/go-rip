@@ -8,7 +8,10 @@ type Query {
 }
 
 type Mutation {
-    add(code: String!, name: String!): Country
+    add(
+        code: String!
+        name: String!
+    ): Country
 }
 
 type Country {

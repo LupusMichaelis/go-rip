@@ -1,5 +1,11 @@
 mutation
 {
-    missing: add(code: "pl", name: "Poland") {code, name}
-    bad: add(code: "aa", name: "") {code, name}
+    missing: add(
+         code: "pl"
+         name: "Poland"
+    ) {code name}
+    bad: add(
+        code: "aa"
+        name: ""
+    ) {code name}
 }
