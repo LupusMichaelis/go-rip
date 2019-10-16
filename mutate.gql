@@ -3,9 +3,9 @@ mutation
     missing: add(
          code: "pl"
          name: "Poland"
-    ) {code name}
+    ) {code}
     bad: add(
         code: "aa"
         name: ""
-    ) {code name}
+    ) {code}
 }
