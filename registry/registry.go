@@ -1,13 +1,13 @@
-package util
+package registry
 
-type Registry map[string][]string
+type Map map[string][]string
 
-func MakeRegistry() (r Registry) {
+func New() (r Map) {
 	r = make(map[string][]string, 0)
 	return
 }
 
-func (r *Registry) Add(key string, text string) {
+func (r *Map) Add(key string, text string) {
 
 	if 0 < len((*r)[key]) {
 
