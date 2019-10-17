@@ -6,8 +6,9 @@ import (
 )
 
 type Country struct {
-	Code string
-	Name string
+	Code       string
+	Name       string
+	Population uint
 }
 
 type CountryList []Country

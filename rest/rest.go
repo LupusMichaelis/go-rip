@@ -33,8 +33,9 @@ func MakeApi(b *business.Business) (api *rest.Api, err error) {
 }
 
 type Country struct {
-	Code string `json:string`
-	Name string `json:string`
+	Code       string `json:string`
+	Name       string `json:string`
+	Population uint32 `json:integer`
 }
 
 type businessHandlerFunc func(b *business.Business) (h rest.HandlerFunc)

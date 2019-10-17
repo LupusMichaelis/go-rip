@@ -17,4 +17,5 @@ type Mutation {
 type Country {
     code: String!
     name: String
+    population: Int
 }

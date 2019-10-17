@@ -1,11 +1,13 @@
 package graphql
 
 import (
+	"fmt"
 	graphql "github.com/graph-gophers/graphql-go"
 	"github.com/graph-gophers/graphql-go/relay"
 	"io/ioutil"
 	"log"
 	"lupusmic.org/rip/business"
+	"math"
 )
 
 type Country struct {
@@ -25,6 +27,21 @@ func (c Country) Name() *string {
 	return &name
 }
 
+func (c Country) Population() (population *int32, err error) {
+
+	if uint(math.MaxInt32) < c.Fields.Population {
+
+		err = fmt.Errorf("Population overflow '%d'", c.Fields.Population)
+
+	} else {
+
+		value := int32(c.Fields.Population)
+		population = &value
+	}
+
+	return
+}
+
 type query struct {
 	b *business.Business
 }
@@ -41,8 +58,9 @@ func (q *query) Country(args struct{ Code string }) (c *Country, err error) {
 		business.Country
 	}{
 		Country: business.Country{
-			Code: found.Code,
-			Name: found.Name,
+			Code:       found.Code,
+			Name:       found.Name,
+			Population: found.Population,
 		},
 	}}
 

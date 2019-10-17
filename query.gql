@@ -5,4 +5,6 @@
     fourth: country(code: "en") {code}
     fifth: country(code: "to") {name}
     sixth: country(code: "pl") {name}
+    biggest: country(code: "cn") {population}
+    alien: country(code: "zz") {population}
 }

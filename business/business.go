@@ -26,9 +26,11 @@ func New() (b *Business) {
 	defer b.Unlock()
 
 	b.countryList = append(b.countryList,
-		Country{Code: "fr", Name: "France"},
-		Country{Code: "de", Name: "Germany"},
-		Country{Code: "en", Name: "England"},
+		Country{Code: "fr", Name: "France", Population: 67372000},
+		Country{Code: "de", Name: "Germany", Population: 82887000},
+		Country{Code: "uk", Name: "United Kingdom", Population: 66435600},
+		Country{Code: "cn", Name: "China", Population: 1399580000},
+		Country{Code: "zz", Name: "Zorg Zo", Population: 239958123456},
 	)
 
 	return
