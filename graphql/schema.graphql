@@ -11,11 +11,29 @@ type Mutation {
     add(
         code: String!
         name: String!
-    ): Country
+    ): CountryResult
 }
 
 type Country {
     code: String!
     name: String
     population: Int
+}
+
+type ValidationError {
+    code: [String]
+    name: String
+    population: String
+}
+}
+
+type NotFoundError {
+}
+
+union CountryResult
+    = Country
+    | ValidationError
+    | NotFoundError
+
+type CountryResult {
 }
