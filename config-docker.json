@@ -1,0 +1,5 @@
+{ "ip": "0.0.0.0"
+, "port": 443
+, "certificate": "server.crt"
+, "key": "server.key"
+}
