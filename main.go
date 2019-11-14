@@ -1,8 +1,8 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-
 	"log"
 	"net/http"
 
@@ -14,8 +14,21 @@ import (
 
 func main() {
 
+	// Configuration
+	configfile := flag.String("config", "config.json", "configuration file")
+	flag.Parse()
+
+	fmt.Println(*configfile)
+	err := config.Load(*configfile)
+	if nil != err {
+
+		log.Fatal(err)
+	}
+
+	// Define the model
 	var b *business.Business = business.New()
 
+	// Mount REST API
 	restApi, err := rest.MakeApi(b)
 	if nil != err {
 
@@ -25,6 +38,7 @@ func main() {
 	apiHandler := restApi.MakeHandler()
 	http.Handle("/r/", http.StripPrefix("/r", apiHandler))
 
+	// Mount GraphQL API
 	graphqlHandler, err := graphql.MakeEndpoint(b)
 	if nil != err {
 
@@ -33,6 +47,7 @@ func main() {
 
 	http.Handle("/g", graphqlHandler)
 
+	// Launch HTTP server
 	addr := fmt.Sprintf("[%s]:%d", config.GetConfiguration().Ip, config.GetConfiguration().Port)
 	srv := &http.Server{
 		Addr: addr,

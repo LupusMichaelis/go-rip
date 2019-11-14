@@ -1,0 +1,5 @@
+{ "ip": "::1"
+, "port": 4343
+, "certificate": "server.crt"
+, "key": "server.key"
+}
