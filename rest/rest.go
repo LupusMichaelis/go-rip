@@ -2,20 +2,61 @@ package rest
 
 import (
 	"fmt"
-	"github.com/ant0ine/go-json-rest/rest"
 	"log"
-	"lupusmic.org/rip/business"
 	"net/http"
+	"strings"
+
+	"github.com/ant0ine/go-json-rest/rest"
+
+	"lupusmic.org/rip/business"
 )
+
+func Contains(haystack []string, needle string) (found bool) {
+
+	for _, straw := range haystack {
+
+		if straw == needle {
+
+			found = true
+			break
+		}
+	}
+
+	return
+}
 
 func MakeApi(b *business.Business) (api *rest.Api, err error) {
 
 	api = rest.NewApi()
+
 	api.Use(rest.DefaultDevStack...)
 
-	router, err := rest.MakeRouter(
-		rest.Get("/country", lockBusiness(b, getAllCountries)),
+	allowedOrigins := []string{
+		"https://172.17.0.3",
+	}
 
+	api.Use(&rest.CorsMiddleware{
+		OriginValidator: func(
+			origin string,
+			request *rest.Request,
+		) bool {
+			return Contains(allowedOrigins, origin)
+		},
+		RejectNonCorsRequests: false,
+		AllowedMethods:        []string{"OPTIONS", "GET"},
+		AllowedHeaders: []string{
+			"Accept",
+			"Content-Type",
+			"Origin",
+		},
+		AccessControlAllowCredentials: true,
+	})
+
+	router, err := rest.MakeRouter(
+		rest.Options("/country", corsOptions(allowedOrigins, []string{"GET", "POST"})),
+		rest.Options("/country/:code", corsOptions(allowedOrigins, []string{"DELETE", "GET", "POST", "PUT"})),
+
+		rest.Get("/country", lockBusiness(b, getAllCountries)),
 		rest.Delete("/country/:code", lockBusiness(b, deleteOneCountry)),
 		rest.Get("/country/:code", lockBusiness(b, getOneCountry)),
 		rest.Post("/country", lockBusiness(b, postOneCountry)),
@@ -28,6 +69,21 @@ func MakeApi(b *business.Business) (api *rest.Api, err error) {
 	}
 
 	api.SetApp(router)
+
+	return
+}
+
+func corsOptions(
+	allowedOrigins []string,
+	allowedMethods []string,
+) (wrapped rest.HandlerFunc) {
+
+	wrapped = func(out rest.ResponseWriter, in *rest.Request) {
+
+		out.Header().Set("Access-Control-Allow-Origin", strings.Join(allowedOrigins, ","))
+		out.Header().Set("Access-Control-Allow-Methods", strings.Join(allowedMethods, ","))
+		out.WriteHeader(http.StatusOK)
+	}
 
 	return
 }
@@ -45,10 +101,15 @@ func lockBusiness(
 	wrapped businessHandlerFunc,
 ) (wrap rest.HandlerFunc) {
 
+	allowedOrigins := []string{
+		"https://172.17.0.3",
+	}
+
 	wrap = func(out rest.ResponseWriter, in *rest.Request) {
 		b.Lock()
 		defer b.Unlock()
 
+		out.Header().Set("Access-Control-Allow-Origin", strings.Join(allowedOrigins, ","))
 		wrapped(b)(out, in)
 	}
 
