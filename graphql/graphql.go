@@ -29,7 +29,7 @@ func (c Country) Name() *string {
 
 func (c Country) Population() (population *int32, err error) {
 
-	if uint(math.MaxInt32) < c.Fields.Population {
+	if uint64(math.MaxInt32) < c.Fields.Population {
 
 		err = fmt.Errorf("Population overflow '%d'", c.Fields.Population)
 

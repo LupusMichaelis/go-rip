@@ -8,7 +8,7 @@ import (
 type Country struct {
 	Code       string
 	Name       string
-	Population uint
+	Population uint64
 }
 
 type CountryList []Country

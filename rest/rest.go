@@ -91,7 +91,7 @@ func corsOptions(
 type Country struct {
 	Code       string `json:string`
 	Name       string `json:string`
-	Population uint32 `json:integer`
+	Population uint64 `json:integer`
 }
 
 type businessHandlerFunc func(b *business.Business) (h rest.HandlerFunc)
@@ -161,8 +161,9 @@ func postOneCountry(b *business.Business) (h rest.HandlerFunc) {
 		}
 
 		validation := b.AddCountry(business.Country{
-			Code: payload.Code,
-			Name: payload.Name,
+			Code:       payload.Code,
+			Name:       payload.Name,
+			Population: payload.Population,
 		})
 
 		if nil != validation {
