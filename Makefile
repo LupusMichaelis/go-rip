@@ -19,7 +19,13 @@ run: build
 	go $@ .
 
 cert:
-	openssl req -newkey rsa:2048 -nodes -keyout server.key -x509 -days 365 -out server.crt
+	openssl \
+		req \
+		-subj '/CN=lupusmic.org/O=None/C=FR' \
+		-newkey rsa:2048 \
+		-nodes -keyout server.key \
+		-x509 -days 365 \
+		-out server.crt
 	chmod 400 server.key server.crt
 
 host:
