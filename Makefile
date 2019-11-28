@@ -29,9 +29,9 @@ cert:
 	chmod 400 server.key server.crt
 
 host:
+	test -h $(GOPATH)/src/$(VENDOR)/rip \
+		|| ln -s $(PWD) $(GOPATH)/src/$(VENDOR)/rip
 	go get -t ./...
-	test -h $(GOPATH)/src/$(VENDOR)/$(notdir $(PWD)) \
-		|| ln -s $(PWD) $(GOPATH)/src/$(VENDOR)/
 
 format: $(SRCS) $(TESTS)
 	go fmt ./...
