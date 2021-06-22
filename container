@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+
+export COMPOSE_DOCKER_CLI_BUILD=1
+export DOCKER_BUILDKIT=1
+
+RIPAPI=rip-api
+docker build -t $RIPAPI .
+CONTAINERID=$(docker run --rm -d $RIPAPI)
+CONTAINERIP=$(docker exec $CONTAINERID hostname -i)
+
+echo "Container (IP:$CONTAINERIP|ID:$CONTAINERID)"
+docker logs -f $CONTAINERID
