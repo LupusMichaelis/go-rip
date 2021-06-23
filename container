@@ -6,7 +6,7 @@ export COMPOSE_DOCKER_CLI_BUILD=1
 export DOCKER_BUILDKIT=1
 
 RIPAPI=rip-api
-docker build -t $RIPAPI .
+docker build --progress plain -t $RIPAPI .
 CONTAINERID=$(docker run --rm -d $RIPAPI)
 CONTAINERIP=$(docker exec $CONTAINERID hostname -i)
 
