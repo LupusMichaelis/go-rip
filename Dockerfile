@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile-upstream:master-labs
-FROM golang:1.12.4-alpine3.9 AS builder
+FROM golang:1.16.5-alpine3.13 AS builder
 
 WORKDIR /go/src/lupusmic.org/rip
 RUN apk add \
@@ -11,7 +11,7 @@ COPY ./src/ /go/src/lupusmic.org/rip
 RUN go get -t ./...
 RUN go build
 
-FROM alpine:3.9
+FROM alpine:3.13
 WORKDIR /go/src/lupusmic.org/rip
 ENTRYPOINT [ "/entrypoint" ]
 CMD [ "rip", "--config", "/etc/lupusmic.org/rip.json" ]
